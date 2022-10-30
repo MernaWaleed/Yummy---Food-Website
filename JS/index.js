@@ -1,14 +1,17 @@
 $(document).ready(function () {
   //***********************! Loading ***********************
 
-  function loading() {
+  const bodyElement = document.body;
+
+  function loading(container = bodyElement) {
     const loadingDiv = document.createElement("div");
-    loadingDiv.classList.add("loading");
+    loadingDiv.classList.add("loading", "bg-dark");
     const loadingIcon = document.createElement("div");
     loadingIcon.classList.add("loader");
     loadingIcon.classList.add("loading-icon");
     loadingDiv.append(loadingIcon);
-    document.getElementsByTagName("body")[0].prepend(loadingDiv);
+
+    container.prepend(loadingDiv);
 
     $(".loading .loading-icon").fadeOut(700, function () {
       $(".loading").fadeOut(700, function () {
@@ -99,7 +102,6 @@ $(document).ready(function () {
     let apiResponse = await fetch(
       `https://www.themealdb.com/api/json/v1/1/${page}.php?${letter}${target}`
     );
-    loading();
     let finalResponse = await apiResponse.json();
     return finalResponse;
   }
@@ -156,6 +158,19 @@ $(document).ready(function () {
         $(".allImages").append(colDiv);
       }
 
+      let allImagesList = $(".allImages").parent();
+      for (let i = 0; i < allImagesList.length; i++) {
+        const currentStyles = window.getComputedStyle(allImagesList[i]);
+        if (currentStyles.display !== "none") {
+          const currentContainer = allImagesList[i];
+          if ($(currentContainer).children(".search").length > 0) {
+            loading($(currentContainer).children(".search"));
+          } else {
+            loading();
+          }
+        }
+      }
+
       mealImage = $(".mealImage");
       imageContainer = $(".imageContainer");
       imageContainer.click(showMeal);
@@ -174,6 +189,7 @@ $(document).ready(function () {
 
     homeContainer.css({ display: "none" });
     searchMeal.css({ display: "none" });
+    // loading();
 
     // console.log(mealDetails);
     targetImage.setAttribute("src", mealDetails.meals[0].strMealThumb);
@@ -182,7 +198,6 @@ $(document).ready(function () {
     category.textContent = mealDetails.meals[0].strCategory;
     area.textContent = mealDetails.meals[0].strArea;
     source.setAttribute("href", mealDetails.meals[0].strSource);
-    // ! Error
     youtupe.setAttribute("href", mealDetails.meals[0].strYoutube);
 
     //***********************! Get Tages ***********************
@@ -273,6 +288,7 @@ $(document).ready(function () {
 
   categoryBtn.click(async function () {
     sideBarAnimation();
+    loading();
     $(".allImages").html("");
     homeContainer.css({ display: "none" });
     imageInfo.css({ display: "none" });
@@ -333,6 +349,7 @@ $(document).ready(function () {
 
   areaBtn.click(async function () {
     sideBarAnimation();
+    loading();
     $(".allImages").html("");
     homeContainer.css({ display: "none" });
     imageInfo.css({ display: "none" });
@@ -372,6 +389,7 @@ $(document).ready(function () {
   //***********************! Open Ingredients Section ***********************
   ingredientsBut.click(async function () {
     sideBarAnimation();
+    loading();
     $(".allImages").html("");
     homeContainer.css({ display: "none" });
     imageInfo.css({ display: "none" });
